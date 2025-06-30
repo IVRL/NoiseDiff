@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 import rawpy
 from PIL import Image
 
+resources_path = '/scratch/students/2023-fall-sp-liying/code/noise_synthesis'
+
 
 def pack_raw(raw, rescale=True):
     # pack Bayer image to 4 channels
@@ -83,8 +85,6 @@ def unpack_raw(raw):
 
     
 def get_darkshading(iso):
-    resources_path = '/scratch/students/2023-fall-sp-liying/code/noise_synthesis'
-    
     with open(os.path.join(resources_path, './LRD/LRD_official/resources', 'darkshading_BLE.pkl'), 'rb') as f:
         blc_mean = pickle.load(f)
     branch = '_highISO' if iso > 1600 else '_lowISO'
@@ -95,8 +95,6 @@ def get_darkshading(iso):
 
 
 def load_darkshading():
-    resources_path = '/scratch/students/2023-fall-sp-liying/code/noise_synthesis'
-    
     with open(os.path.join(resources_path, './LRD/LRD_official/resources', 'darkshading_BLE.pkl'), 'rb') as f:
         blc_mean = pickle.load(f)
 
