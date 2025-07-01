@@ -7,7 +7,7 @@ python train_diffusion.py --use_tb_logger --save_epoch_freq 10 --generation_resu
 
 # Test the diffusion model for noise image generation
 # You can generate noise data for different camera setting by changing --iso and --ratio
-python test_diffusion.py --name ISO800Ratio250 --resume pretrained_ckpts/DiffusionNet_ckpt.pth --generation_result noise --testset NoiseImageGenerationDataset --save_npy --random_seed 0  --beta_schedule sigmoid2 --batch_size 4 --net_name NoiseDiffNet --positional_encoding --dim 48 --crop_size 512 --with_camera_settings --save_folder ./logs/generated_data/noise_imgs_SID_DDPM --iso 800 --ratio 250
+python test_diffusion.py --name ISO800Ratio250 --resume pretrained_ckpts/DiffusionNet_ckpt.pth --generation_result noise --testset NoiseImageGenerationDataset --save_npy --random_seed 0  --beta_schedule sigmoid2 --batch_size 4 --net_name NoiseDiffNet --positional_encoding --dim 48 --crop_size 512 --with_camera_settings --save_folder ./output/generated_data/noise_imgs_SID_DDPM --iso 800 --ratio 250
 
 
 
