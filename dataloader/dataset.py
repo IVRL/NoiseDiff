@@ -19,7 +19,7 @@ sys.path.append('..')
 from utils import util
 from utils import raw_util
 
-train_path = "/scratch/students/2023-fall-sp-liying/dataset/SID/Sony_train_list_modified.txt"
+train_path = "/scratch/students/2023-fall-sp-liying/dataset/SID/Sony_train_list.txt"
 data_folder = "/scratch/students/2023-fall-sp-liying/dataset/SID"
     
 # -------------------------------------
