@@ -1,6 +1,5 @@
 # NoiseDiff
-
-Official PyTorch implementation of our ICCP 2025 paper:  
+ 
 **[Dark Noise Diffusion: Noise Synthesis for Low-Light Image Denoising](https://arxiv.org/abs/2503.11262v1)**  
 <sub>[Liying Lu](https://scholar.google.com/citations?user=WT8kWYYAAAAJ&hl=en) &nbsp;&nbsp;&nbsp; [Raphaël Achddou](https://rachddou.github.io/) &nbsp;&nbsp;&nbsp; [Sabine Süsstrunk](https://people.epfl.ch/sabine.susstrunk)</sub>
 ---
