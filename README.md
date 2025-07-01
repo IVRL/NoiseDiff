@@ -82,10 +82,10 @@ This project refers to some code from the following repositories, we thank the a
 If you find this work useful, please cite our paper:
 
 ```
-@article{NoiseDiff2025,
-  title={Dark Noise Diffusion: Noise Synthesis for Low-Light Image Denoising},
-  author={Lu, Liying and Achddou, Rapha{\"e}l and S{\"u}sstrunk, Sabine},
-  journal={ICCP},
-  year={2025}
+@inproceedings{NoiseDiff2025,
+  title     = {Dark Noise Diffusion: Noise Synthesis for Low-Light Image Denoising},
+  author    = {Lu, Liying and Achddou, Rapha{\"e}l and S{\"u}sstrunk, Sabine},
+  booktitle = {Proceedings of the International Conference on Computational Photography (ICCP)},
+  year      = {2025}
 }
 ```
