@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import rawpy
 from PIL import Image
 
-resources_path = '/scratch/students/2023-fall-sp-liying/code/noise_synthesis'
+resources_path = './resources'
 
 
 def pack_raw(raw, rescale=True):
@@ -85,26 +85,26 @@ def unpack_raw(raw):
 
     
 def get_darkshading(iso):
-    with open(os.path.join(resources_path, './LRD/LRD_official/resources', 'darkshading_BLE.pkl'), 'rb') as f:
+    with open(os.path.join(resources_path, 'darkshading_BLE.pkl'), 'rb') as f:
         blc_mean = pickle.load(f)
     branch = '_highISO' if iso > 1600 else '_lowISO'
-    ds_k = np.load(os.path.join(resources_path, './LRD/LRD_official/resources', 'darkshading%s_k.npy' % branch), allow_pickle=True)
-    ds_b = np.load(os.path.join(resources_path, './LRD/LRD_official/resources', 'darkshading%s_b.npy' % branch), allow_pickle=True)
+    ds_k = np.load(os.path.join(resources_path, 'darkshading%s_k.npy' % branch), allow_pickle=True)
+    ds_b = np.load(os.path.join(resources_path, 'darkshading%s_b.npy' % branch), allow_pickle=True)
     darkshading = ds_k * iso + ds_b + blc_mean[iso]
     return darkshading
 
 
 def load_darkshading():
-    with open(os.path.join(resources_path, './LRD/LRD_official/resources', 'darkshading_BLE.pkl'), 'rb') as f:
+    with open(os.path.join(resources_path, 'darkshading_BLE.pkl'), 'rb') as f:
         blc_mean = pickle.load(f)
 
     branch = '_highISO'
-    ds_k_high = np.load(os.path.join(resources_path, './LRD/LRD_official/resources', 'darkshading%s_k.npy' % branch), allow_pickle=True)
-    ds_b_high = np.load(os.path.join(resources_path, './LRD/LRD_official/resources', 'darkshading%s_b.npy' % branch), allow_pickle=True)
+    ds_k_high = np.load(os.path.join(resources_path, 'darkshading%s_k.npy' % branch), allow_pickle=True)
+    ds_b_high = np.load(os.path.join(resources_path, 'darkshading%s_b.npy' % branch), allow_pickle=True)
 
     branch = '_lowISO'
-    ds_k_low = np.load(os.path.join(resources_path, './LRD/LRD_official/resources', 'darkshading%s_k.npy' % branch), allow_pickle=True)
-    ds_b_low = np.load(os.path.join(resources_path, './LRD/LRD_official/resources', 'darkshading%s_b.npy' % branch), allow_pickle=True)
+    ds_k_low = np.load(os.path.join(resources_path,'darkshading%s_k.npy' % branch), allow_pickle=True)
+    ds_b_low = np.load(os.path.join(resources_path, 'darkshading%s_b.npy' % branch), allow_pickle=True)
 
     return ds_k_high, ds_b_high, ds_k_low, ds_b_low, blc_mean
 
