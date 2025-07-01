@@ -36,7 +36,7 @@
 
 ## Usage
 
-All commands for training and testing are provided in `script.sh`. You can modify the paths and parameters in the script as needed.
+All commands for training and testing are provided in `script.sh`. You can modify the parameters in the script as needed.
 
 ### 1. Diffusion Network Training & Testing (Data Generation)
 
@@ -66,8 +66,6 @@ All commands for training and testing are provided in `script.sh`. You can modif
 ## Notes
 
 - *The synthetic dataset is a bit large, we are still trying to upload the complete dataset.*
-- All commands and usage examples are provided in `script.sh`.  
-  Please refer to and modify this script according to your setup and requirements.
 - For any issues or questions, please open an issue on this repository, or contact us via email at liying.lu@epfl.ch.
 
 ---
