@@ -6,7 +6,6 @@ import math
 import numpy as np
 import random
 import cv2
-from PIL import Image
 import importlib
 from tensorboardX import SummaryWriter
 import torch
@@ -14,7 +13,6 @@ import torch.nn as nn
 from torch.nn.parallel import DistributedDataParallel
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import CosineAnnealingLR
-import torchvision
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from collections import OrderedDict
@@ -23,9 +21,7 @@ import sys
 sys.path.append("..")
 from utils import util, raw_util 
 from models.modules import define_G
-from models.losses import PerceptualLoss, AdversarialLoss
 from dataloader import DistIterSampler, create_dataloader
-from models.denoising_diffusion_pytorch import GaussianDiffusion
 import pickle
 import torch.distributions as tdist
 
