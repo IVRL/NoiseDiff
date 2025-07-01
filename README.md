@@ -8,7 +8,7 @@
 
 1. **Clone the repository**
     ```bash
-    git clone https://github.com/yourusername/NoiseDiff.git
+    git clone https://github.com/SkyeLu/NoiseDiff.git
     cd NoiseDiff
     ```
 
