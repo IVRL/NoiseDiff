@@ -24,6 +24,13 @@ from utils import raw_util, metric_util
 from models.trainer_denoising import Trainer
 
 
+sid_test_path = '/scratch/students/2023-fall-sp-liying/dataset/SID/Sony_test_list.txt'
+sid_eval_path = '/scratch/students/2023-fall-sp-liying/dataset/SID/Sony_val_list.txt'
+eld_eval_path = '/scratch/students/2023-fall-sp-liying/code/noise_synthesis/ELD/ELD_official/dataset/Sony_val.txt'
+eld_test_path = '/scratch/students/2023-fall-sp-liying/code/noise_synthesis/ELD/ELD_official/dataset/Sony_test.txt'
+sid_folder = "/scratch/students/2023-fall-sp-liying/dataset/SID"
+eld_folder = '/scratch/students/2023-fall-sp-liying/dataset/ELD/testset'
+
 
 def set_random_seed(seed):
     random.seed(seed)
@@ -159,12 +166,6 @@ def get_filename_iso():
             
         return eld_list
             
-        
-    sid_test_path = '/scratch/students/2023-fall-sp-liying/dataset/SID/Sony_test_list.txt'
-    sid_eval_path = '/scratch/students/2023-fall-sp-liying/dataset/SID/Sony_val_list.txt'
-    eld_eval_path = '/scratch/students/2023-fall-sp-liying/code/noise_synthesis/ELD/ELD_official/dataset/Sony_val.txt'
-    eld_test_path = '/scratch/students/2023-fall-sp-liying/code/noise_synthesis/ELD/ELD_official/dataset/Sony_test.txt'
-
     eld_eval_list = update_eldlist_withiso(sid_eval_path, eld_eval_path)
     eld_test_list = update_eldlist_withiso(sid_test_path, eld_test_path)
 
@@ -431,12 +432,12 @@ def main():
     
     ## Get test image paths
     if args.test_dataset == 'SID':
-        data_folder = "/scratch/students/2023-fall-sp-liying/dataset/SID"
+        data_folder = sid_folder
         eld_eval_list, eld_test_list = get_filename_iso()
         input_list = eld_eval_list + eld_test_list
         
     elif args.test_dataset == 'ELD':
-        databasedir = '/scratch/students/2023-fall-sp-liying/dataset/ELD/testset'
+        databasedir = eld_folder
         scenes = list(range(1, 10+1))
     
         cameras = ['SonyA7S2']     
