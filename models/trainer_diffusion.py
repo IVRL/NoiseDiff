@@ -24,7 +24,6 @@ import sys
 sys.path.append("..")
 from utils import util, raw_util 
 from models.modules import define_G
-from models.losses import PerceptualLoss, AdversarialLoss
 from dataloader import DistIterSampler, create_dataloader
 from models.denoising_diffusion_pytorch import GaussianDiffusion
 import pickle
@@ -168,9 +167,6 @@ class Trainer(object):
                 noisy_img = batch_samples['noisy_img']
                 clean_img = batch_samples['clean_img']
                 
-                if 'lw' in batch_samples.keys():
-                    lw_map = batch_samples['lw']
-                
                 if self.args.with_camera_settings:
                     iso_ratio_idx = batch_samples['iso_ratio_idx']
                 if self.args.positional_encoding:
@@ -180,23 +176,10 @@ class Trainer(object):
                 self.optimizer_G.zero_grad()
 
                 if self.args.generation_result == 'noise':
-                    if self.args.with_camera_settings:
-                        diffusion_loss = self.diffusion(noise_gt, condition={'clean_img': clean_img, 'iso_ratio_idx': iso_ratio_idx, 'position': coord})
-                    elif self.args.positional_encoding:
-                        diffusion_loss = self.diffusion(noise_gt, condition={'clean_img': clean_img, 'position': coord, 'lw_map': lw_map})
-                    else:
-                        diffusion_loss = self.diffusion(noise_gt, condition=clean_img)
+                    diffusion_loss = self.diffusion(noise_gt, condition={'clean_img': clean_img, 'iso_ratio_idx': iso_ratio_idx, 'position': coord})
                 elif self.args.generation_result == 'image':
-                    if self.args.with_camera_settings:
-                        # logging.info('taking camera settings as condition')
-                        diffusion_loss = self.diffusion(noisy_img, condition={'clean_img': clean_img, 'iso_ratio_idx': iso_ratio_idx, 'position': coord})
-                    elif self.args.positional_encoding:
-                        # logging.info('training with positional encoding')
-                        diffusion_loss = self.diffusion(noisy_img, condition={'clean_img': clean_img, 'position': coord})
-                    else:
-                        diffusion_loss = self.diffusion(noisy_img, condition=clean_img)
+                    diffusion_loss = self.diffusion(noisy_img, condition={'clean_img': clean_img, 'iso_ratio_idx': iso_ratio_idx, 'position': coord})
 
-                
                 loss = loss + diffusion_loss
                 log_info += 'diffusion_loss:%.06f ' % (diffusion_loss.item())
             
@@ -316,8 +299,6 @@ class Trainer(object):
                         output = self.diffusion.sample(batch_size=self.args.batch_size, 
                                                        condition={'clean_img': clean_img, 'iso_ratio_idx': iso_ratio_idx, 'position': torch.zeros_like(coord)})
                     
-
-                        
                 if self.args.save_npy:
                     clean_npy_folder = os.path.join(npy_save_path, 'clean')
                     noisy_npy_folder = os.path.join(npy_save_path, 'noisy')
