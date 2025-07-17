@@ -80,6 +80,7 @@ All commands for training and testing are provided in `script.sh`. You can modif
 ## Acknowledgement
 
 This project refers to some code from the following repositories, we thank the authors for their contributions and publishing their code:
+- [Denoising-Diffusion-Pytorch](https://github.com/lucidrains/denoising-diffusion-pytorch)
 - [Learning-to-See-in-the-Dark](https://github.com/cchen156/Learning-to-See-in-the-Dark)
 - [PMN](https://github.com/megvii-research/PMN)
 
