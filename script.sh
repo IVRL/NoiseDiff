@@ -1,7 +1,7 @@
 # ----------------- Diffusion Training ----------------------
 
 # Train the diffusion model
-python train_diffusion.py --use_tb_logger --save_epoch_freq 10 --generation_result noise --name train_diffusion --net_name NoiseDiffNet --beta_schedule sigmoid2 --positional_encoding --trainset SonyTrainDataset --dim 48 --crop_size 512 --with_camera_settings --batch_size 4 --max_iter 10000 --save_folder ./logs/noise_synthesis_newstart/weights
+python train_diffusion.py --use_tb_logger --save_epoch_freq 10 --generation_result noise --name train_diffusion --net_name NoiseDiffNet --beta_schedule sigmoid2 --positional_encoding --trainset SonyTrainDataset --dim 48 --crop_size 512 --with_camera_settings --batch_size 4 --max_iter 1000 --save_folder ./logs/noise_synthesis_newstart/weights
 
 # ----------------- Diffusion Testing ----------------------
 
