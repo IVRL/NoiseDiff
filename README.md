@@ -6,7 +6,7 @@
 ---
 
 **Authors**  
-[Liying Lu](https://scholar.google.com/citations?user=WT8kWYYAAAAJ&hl=en) &nbsp;|&nbsp; 
+[Liying Lu](https://skyelu.github.io/) &nbsp;|&nbsp; 
 [Raphaël Achddou](https://rachddou.github.io/) &nbsp;|&nbsp; 
 [Sabine Süsstrunk](https://people.epfl.ch/sabine.susstrunk)
 
