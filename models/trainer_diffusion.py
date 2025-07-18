@@ -242,18 +242,12 @@ class Trainer(object):
         if not os.path.exists(save_path):
             os.mkdir(save_path)
             
-        img_save_path = os.path.join(save_path, 'img')
-        if not os.path.exists(img_save_path):
-            os.mkdir(img_save_path)
-            
         npy_save_path = os.path.join(save_path, 'npy')
         if not os.path.exists(npy_save_path):
             os.mkdir(npy_save_path)
             
 
         self.net.eval()
-        reg_num = 0
-        num = 0
         npy_num = 0
 
         total_time = 0
