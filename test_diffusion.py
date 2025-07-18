@@ -22,7 +22,7 @@ def set_random_seed(seed):
 def main():
     parser = argparse.ArgumentParser(description='referenceSR Testing')
     parser.add_argument('--random_seed', default=0, type=int)
-    parser.add_argument('--name', default='test_SID_1004_diffusionv2_wonormalization_longer_genimg_withnorm', type=str)
+    parser.add_argument('--name', default='test_diffusion', type=str)
     parser.add_argument('--phase', default='test', type=str)
 
     ## device setting
@@ -47,7 +47,7 @@ def main():
     
     
     ## network setting
-    parser.add_argument('--net_name', default='UNetAttn', type=str, help='UNet | ')
+    parser.add_argument('--net_name', default='NoiseDiffNet', type=str, help='NoiseDiffNet | ')
     parser.add_argument('--dim', default=64, type=int)
     parser.add_argument('--inp_dim', default=4, type=int)
     parser.add_argument('--cond_dim', default=4, type=int)
@@ -58,19 +58,12 @@ def main():
     parser.add_argument('--generation_result', default='noise', type=str, help='noise | image')
     parser.add_argument('--self_condition', action='store_true')
     parser.add_argument('--auto_normalize', action='store_true')
-    parser.add_argument('--sample_time_range', default='None', type=str)
     parser.add_argument('--diffusion_objective', default='pred_v', type=str)
-    parser.add_argument('--use_diffusion_loss_weight', action='store_true')
-    parser.add_argument('--min_snr_loss_weight', action='store_true')
-    parser.add_argument('--use_noneuniform_sampling', action='store_true')
-    parser.add_argument('--use_fourier_feature', action='store_true')
-    parser.add_argument('--use_condition_fourier_feature', action='store_true')
-    parser.add_argument('--with_timestep_pdf', action='store_true')
     parser.add_argument('--dark_frame', action='store_true')
     
 
     ## dataloader setting
-    parser.add_argument('--testset', default='TestSonyDatasetSingleISO', type=str, help='TestSonyDatasetSingleISO | TestSonyDataset')
+    parser.add_argument('--testset', default='NoiseImageGenerationDataset', type=str, help='NoiseImageGenerationDataset | ')
     parser.add_argument('--crop_size', default=256, type=int)
     parser.add_argument('--batch_size', default=16, type=int)
     parser.add_argument('--num_workers', default=4, type=int)
@@ -81,8 +74,8 @@ def main():
     
     
     
-    parser.add_argument('--resume', default='../logs/noise_synthesis/weights/train_SID_1004_diffusionv2_wonormalization_longer_genimg_withnorm/snapshot/net_final.pth', type=str)
-    parser.add_argument('--save_folder', default='../logs/noise_synthesis/DIV2K_HR_unprocessed_0910_align', type=str)
+    parser.add_argument('--resume', default='.', type=str)
+    parser.add_argument('--save_folder', default='./output/generated_data/noise_imgs_SID_DDPM', type=str)
 
 
     ## setup training environment
