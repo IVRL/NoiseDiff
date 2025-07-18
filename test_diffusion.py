@@ -32,15 +32,11 @@ def main():
     parser.add_argument('--local_rank', type=int, default=0)
     
     ## estimation
-    parser.add_argument('--noise_param_estm', action='store_true')
     parser.add_argument('--visualize_img', action='store_true')
     parser.add_argument('--visualize_noise', action='store_true')
     parser.add_argument('--save_npy', action='store_true')
     parser.add_argument('--with_camera_settings', action='store_true')
-    parser.add_argument('--mean_shift', action='store_true')
-    parser.add_argument('--std_shift', action='store_true')
     parser.add_argument('--beta_schedule', default='sigmoid', type=str, help='sigmoid | sigmoid2')
-    parser.add_argument('--scale_noise', action='store_true')
     parser.add_argument('--temperature', default=0.1, type=float)
     parser.add_argument('--positional_encoding', action='store_true')
     parser.add_argument('--normalize_condition', action='store_true')
