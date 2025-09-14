@@ -344,7 +344,7 @@ def process_image_pair(in_path, gt_path, ratio, iso, net, device, corrector, arg
     
     # Save processed image if requested
     if args.visualize_img:
-        image_name = os.path.basename(in_path).split('.')[0]
+        image_name = os.path.basename(in_path).split('.ARW')[0]
         output_processed = postprocess_bayer(gt_path, output)
         Image.fromarray(output_processed.astype(np.uint8)).save(os.path.join(save_folder, f"{image_name}_output.png"))
         
