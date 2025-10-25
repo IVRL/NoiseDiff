@@ -1,7 +1,7 @@
 # NoiseDiff
 
 **Dark Noise Diffusion: Noise Synthesis for Low-Light Image Denoising**  
-📄 [View on arXiv](https://arxiv.org/abs/2503.11262v1)
+📄 [View on arXiv](https://arxiv.org/pdf/2503.11262)
 
 ---
 
