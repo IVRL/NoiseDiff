@@ -344,7 +344,12 @@ def process_image_pair(in_path, gt_path, ratio, iso, net, device, corrector, arg
     
     # Save processed image if requested
     if args.visualize_img:
-        image_name = os.path.basename(in_path).split('.ARW')[0]
+        if args.test_dataset == 'ELD':
+            scene_name, image_name = in_path.split('/')[-2:]
+            image_name = scene_name + '_' + image_name.split('.ARW')[0]
+        else:
+            image_name = os.path.basename(in_path).split('.ARW')[0]
+            
         output_processed = postprocess_bayer(gt_path, output)
         Image.fromarray(output_processed.astype(np.uint8)).save(os.path.join(save_folder, f"{image_name}_output.png"))
         
