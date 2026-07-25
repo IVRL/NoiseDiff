@@ -148,8 +148,156 @@ class SonyTrainDataset(Dataset):
     
 # -------------------------------------
 # For diffusion model testing, to generate noise data
+# For each iso_ratio setting, read all the clean images, 
+# and later in the trainer we generate their corresponding noise image
 # -------------------------------------
 class NoiseImageGenerationDataset(Dataset):
+    def __init__(self, args):
+        self.args = args
+
+        in_paths = []
+        gt_paths = []
+        isos = []
+        ratios = []
+
+        with open(train_path, 'r') as file:
+            for line in file:
+                if line:
+                    in_path, gt_path, iso, fvalue = line.split(' ')
+                    iso = int(iso.replace('ISO', ''))
+
+                    in_fn = os.path.basename(in_path)
+                    gt_fn = os.path.basename(gt_path)
+
+                    in_exposure = float(in_fn[9:-5])
+                    gt_exposure = float(gt_fn[9:-5])
+
+                    ratio = min(gt_exposure / in_exposure, 300)
+
+                    in_paths.append(os.path.join(data_folder, in_path))
+                    gt_paths.append(os.path.join(data_folder, gt_path))
+                    isos.append(iso)
+                    ratios.append(ratio)
+
+        self.input_list = in_paths
+        self.gt_list = gt_paths
+        self.iso_list = isos
+        self.ratio_list = ratios
+
+        print('image number: ', len(self.input_list))
+
+        # build patch coordinates
+        self.coord_list = []
+
+        w = 4256 // 2
+        h = 2848 // 2
+
+        ps = args.crop_size
+        step = ps - ps // 4
+        thresh_size = ps
+
+        h_space = np.arange(0, h - ps + 1, step)
+        if h - (h_space[-1] + ps) < thresh_size:
+            h_space = np.append(h_space, h - ps)
+
+        w_space = np.arange(0, w - ps + 1, step)
+        if w - (w_space[-1] + ps) < thresh_size:
+            w_space = np.append(w_space, w - ps)
+
+        for y in h_space:
+            for x in w_space:
+                self.coord_list.append([x, y])
+
+        print('len(self.coord_list): ', len(self.coord_list))
+
+        self.patch_per_img = len(self.coord_list)
+        self.data_len = len(self.input_list) * self.patch_per_img
+
+        print('data length: ', self.data_len)
+        print('img number: ', len(self.input_list))
+
+        with open('dataloader/combination_mapping.pickle', 'rb') as handle:
+            self.combination_mapping = pickle.load(handle)
+
+    def __len__(self):
+        return self.data_len
+
+    def aug(self, img_list, x, y, h, w):
+        for i in range(len(img_list)):
+            img_list[i] = img_list[i][y:y+h, x:x+w, :]
+        return img_list
+
+    def __getitem__(self, idx):
+
+        img_idx = idx // self.patch_per_img
+
+        in_path = self.input_list[img_idx]
+        gt_path = self.gt_list[img_idx]
+
+        iso = self.iso_list[img_idx]
+        ratio = self.ratio_list[img_idx]
+
+        iso_ratio_idx = self.combination_mapping.get((iso, ratio))
+
+        # read clean raw
+        gt_raw = rawpy.imread(gt_path)
+        gt_norm = raw_util.pack_raw(gt_raw)
+
+        H, W, _ = gt_norm.shape
+
+        # coordinate map
+        coord = util.make_coord(H, W, rescale=True).numpy()
+
+        # crop
+        x, y = self.coord_list[idx % self.patch_per_img]
+
+        gt_crop, coord_crop = self.aug(
+            [gt_norm, coord],
+            x,
+            y,
+            self.args.crop_size,
+            self.args.crop_size
+        )
+
+        noisy_name = os.path.basename(in_path)
+        clean_name = os.path.basename(gt_path)
+
+        sample = {
+            'iso': iso,
+            'ratio': ratio,
+            'clean_img': gt_crop,
+            'coord': coord_crop,
+            'noisy_name': noisy_name,
+            'clean_name': clean_name,
+            'iso_ratio_idx': iso_ratio_idx,
+            'image_coord': f'{int(x)}_{int(y)}',
+        }
+
+        for key in sample.keys():
+            if key not in [
+                'iso',
+                'ratio',
+                'noisy_name',
+                'clean_name',
+                'iso_ratio_idx',
+                'coord_list',
+                'image_coord',
+            ]:
+                sample[key] = sample[key].astype(np.float32)
+                sample[key] = torch.from_numpy(sample[key]).permute(2, 0, 1).float()
+
+        return sample
+    
+
+
+# -------------------------------------
+# Complementary noisy image generation
+# For Standard Configuration mentioned in appendix.
+# Since for some iso_ratio settings, their clean image numbers are quite small,
+# we thus sample complementary clean images from other settings to generate noisy images for this setting,
+# so that the data can be more balanced.
+# -------------------------------------
+class ComplementNoiseImageGenerationDataset(Dataset):
     def __init__(self, args):
         self.args = args
         iso_value = args.iso_value
@@ -283,134 +431,4 @@ class NoiseImageGenerationDataset(Dataset):
     
     
 
-    
-    
-    
-
-
-
-# Ignore
-class GenDarkFrameDataset(Dataset):
-    def __init__(self, args):
-        self.args = args
-        iso_value = args.iso_value
-        ratio_value = args.ratio_value
-
-        in_paths = []
-        gt_paths = []
-        isos = []
-        ratios = []
-        iso_ratio_list = []
-
-        with open(train_path, 'r') as file:
-            for line in file:
-                if line:
-                    in_path, gt_path, iso, fvalue = line.split(' ')
-                    iso = int(iso.replace('ISO', ''))
-                    
-                    in_fn = os.path.basename(in_path)
-                    gt_fn = os.path.basename(gt_path)
-                    test_id = int(in_fn[0:5])
-                    in_exposure = float(in_fn[9:-5])
-                    gt_exposure = float(gt_fn[9:-5])
-                    ratio = min(gt_exposure / in_exposure, 300)
-
-                    iso_ratio = str(iso)+'_'+str(int(ratio))
-
-                    if iso_ratio_list.count(iso_ratio) < 1:
-                        iso_ratio_list.append(iso_ratio)
-                        in_paths.append(os.path.join(data_folder, in_path))
-                        gt_paths.append(os.path.join(data_folder, gt_path))
-                        isos.append(iso)
-                        ratios.append(ratio)
-                        
-        self.input_list = in_paths#[::-1]
-        self.gt_list = gt_paths#[::-1]
-        self.iso_list = isos#[::-1]
-        self.ratio_list = ratios#[::-1]
-
-
-        print('image number: ', len(self.input_list))
-        
-        self.coord_list = []
-                    
-        w, h = 4256 // 2, 2848 // 2
-        ps = args.crop_size
-        step = ps - ps // 4
-        thresh_size = ps
-        h_space = np.arange(0, h - ps + 1, step)
-        if h - (h_space[-1] + ps) < thresh_size:
-            h_space = np.append(h_space, h - ps)
-        w_space = np.arange(0, w - ps + 1, step)
-        if w - (w_space[-1] + ps) < thresh_size:
-            w_space = np.append(w_space, w - ps)
-        
-        
-        index = 0
-        for y in h_space:
-            for x in w_space:
-                index += 1
-                self.coord_list.append([x, y])
-                    
-                    
-        print('len(self.coord_list) ', len(self.coord_list))
-        
-        self.patch_per_img = len(self.coord_list)
-        self.data_len = len(self.input_list) * self.patch_per_img
-                
-        print('data length: ', self.data_len)
-        print('img number: ', len(self.input_list))
-        
-        with open('dataloader/combination_mapping.pickle', 'rb') as handle:
-            self.combination_mapping = pickle.load(handle)
-
-
-    def __len__(self):
-        return self.data_len
-
-    def aug(self, img_list, x, y, h, w):
-        for i in range(len(img_list)):
-            img_list[i] = img_list[i][y:y+h, x:x+w, :]
-        return img_list
-
-    def __getitem__(self, idx):
-        img_idx = np.floor(idx / self.patch_per_img).astype(np.uint8)
-        in_path = self.input_list[img_idx]
-        gt_path = self.gt_list[img_idx]
-        iso = self.iso_list[img_idx]
-        ratio = self.ratio_list[img_idx]
-        iso_ratio_idx = self.combination_mapping.get((iso, ratio))
-
-        W, H = 4256 // 2, 2848 // 2
-        coord = util.make_coord(H, W, rescale=True).numpy()  # (H, W, 2)
-        
-        x, y = self.coord_list[idx % self.patch_per_img]
-        coord_crop = self.aug([coord],
-                               x, y,
-                               self.args.crop_size, self.args.crop_size)
-        coord_crop = coord_crop[0]
-        
-        noisy_name = os.path.basename(in_path)
-        clean_name = os.path.basename(gt_path)
-
-        sample = {
-                  'iso': iso,
-                  'ratio': ratio,
-                  'coord': coord_crop,
-                  'noisy_name': noisy_name,
-                  'clean_name': clean_name,
-                  'iso_ratio_idx': iso_ratio_idx,
-                  'image_coord': str(int(x))+'_'+str(int(y)),
-                  
-                 }
-
-        for key in sample.keys():
-            if key not in ['iso', 'ratio', 'noisy_name', 'clean_name', 'iso_ratio_idx', 'coord_list', 'image_coord',]:
-                sample[key] = sample[key].astype(np.float32)
-                sample[key] = torch.from_numpy(sample[key]).permute(2, 0, 1).float()
-            else:
-                pass
-
-        return sample
-    
     
